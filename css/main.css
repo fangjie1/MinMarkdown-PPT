@@ -27,6 +27,11 @@ button:hover {
   text-align: center;
 }
 
+
+
+
+
+
 /* Control */
 .control {
   position: fixed;
@@ -112,7 +117,7 @@ button:hover {
   padding-bottom: 60px;
   font-size: 14px;
   transform: translateX(calc(100% + 180px)); 
-  overflow: auto;
+  overflow: scroll;
   transition: transform .3s;
 }
 
@@ -138,7 +143,6 @@ button:hover {
   color: #aaa;
   border: none;
   outline: none;
-  resize: none
 }
 
 .menu .editor [type=file] {
