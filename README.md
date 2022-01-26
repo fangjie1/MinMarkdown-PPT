@@ -1,4 +1,4 @@
-## OneSlide——极简 Markdown PPT
+## 极简 Markdown PPT
 
 一款基于[reveal.js](https://github.com/hakimel/reveal.js)开发的markdown编写的PPT，让排版变的更轻松
 
