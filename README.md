@@ -1,7 +1,5 @@
-## 极简 Markdown PPT
-
-基于[reveal.js](https://github.com/hakimel/reveal.js)开发的支持markdown语法对PPT进行快速编写，让排版变的更轻松
-
+## MinMarkdown-PPT
+一款基于[reveal.js](https://github.com/hakimel/reveal.js)开发的支持markdown语法对PPT进行快速编写的极简 Markdown PPT，让排版变的更轻松
 ### 使用方法：
 鼠标放在页面上方即可显示设置按钮，对PPT进行编写
 ### 编写规则:
@@ -14,6 +12,5 @@
 ### 4.1 slide //第四页的子页面
 ### 4.2 slide //第四页的子页面
 ```
-
 ### 功能：
 支持主题切换,pdf打印,演讲者模式。
