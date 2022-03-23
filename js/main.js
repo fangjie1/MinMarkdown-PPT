@@ -1,10 +1,13 @@
-const $ = s => document.querySelector(s)
-const $$ = s => document.querySelectorAll(s)
-const isMain = str => (/^#{1,2}(?!#)/).test(str)
-const isSub = str => (/^#{3}(?!#)/).test(str)
+const $ = (s) => document.querySelector(s)
+const $$ = (s) => document.querySelectorAll(s)
+const isMain = (str) => /^#{1,2}(?!#)/.test(str)
+const isSub = (str) => /^#{3}(?!#)/.test(str)
 //格式化Markdown格式
-const convert = raw => {
-  let arr = raw.split(/\n(?=\s*#{1,3}[^#])/).filter(s => s != "").map(s => s.trim())
+const convert = (raw) => {
+  let arr = raw
+    .split(/\n(?=\s*#{1,3}[^#])/)
+    .filter((s) => s != '')
+    .map((s) => s.trim())
   let html = ''
   for (let i = 0; i < arr.length; i++) {
     if (arr[i + 1] !== undefined) {
@@ -43,7 +46,6 @@ ${arr[i]}
 </section>
 `
       }
-
     } else {
       if (isMain(arr[i])) {
         html += `
@@ -70,7 +72,7 @@ ${arr[i]}
 
 // 显示切换面板
 const Menu = {
-  init () {
+  init() {
     console.log('Menu init...')
     this.$settingIcon = $('.control .icon-setting')
     this.$menu = $('.menu')
@@ -81,7 +83,7 @@ const Menu = {
     this.bind()
   },
 
-  bind () {
+  bind() {
     this.$settingIcon.onclick = () => {
       this.$menu.classList.add('open')
     }
@@ -90,32 +92,35 @@ const Menu = {
       this.$menu.classList.remove('open')
     }
 
-    this.$$tabs.forEach($tab => $tab.onclick = () => {
-      this.$$tabs.forEach($node => $node.classList.remove('active'))
-      $tab.classList.add('active')
-      let index = [...this.$$tabs].indexOf($tab)
-      this.$$contents.forEach($node => $node.classList.remove('active'))
-      this.$$contents[index].classList.add('active')
-    })
-  }
+    this.$$tabs.forEach(
+      ($tab) =>
+        ($tab.onclick = () => {
+          this.$$tabs.forEach(($node) => $node.classList.remove('active'))
+          $tab.classList.add('active')
+          let index = [...this.$$tabs].indexOf($tab)
+          this.$$contents.forEach(($node) => $node.classList.remove('active'))
+          this.$$contents[index].classList.add('active')
+        }),
+    )
+  },
 }
 
 // 上传图片
 const ImgUploader = {
-  init () {
+  init() {
     this.$fileInput = $('#img-uploader')
     this.$textarea = $('.editor textarea')
 
     AV.init({
-      appId: "UqBaAsQMqOQB3rLwNGLTKtOF-gzGzoHsz",
-      appKey: "uv9EyQmkgX7UjUt4TeVUBhVa",
-      serverURLs: "https://uqbaasqm.lc-cn-n1-shared.com"
+      appId: 'UqBaAsQMqOQB3rLwNGLTKtOF-gzGzoHsz',
+      appKey: 'uv9EyQmkgX7UjUt4TeVUBhVa',
+      serverURLs: 'https://uqbaasqm.lc-cn-n1-shared.com',
     })
 
     this.bind()
   },
 
-  bind () {
+  bind() {
     let self = this
     this.$fileInput.onchange = function () {
       if (this.files.length > 0) {
@@ -127,54 +132,60 @@ const ImgUploader = {
         }
         self.insertText(`![上传中，进度0%]()`)
         let avFile = new AV.File(encodeURI(localFile.name), localFile)
-        avFile.save({
-          keepFileName: true,
-          onprogress (progress) {
-            self.insertText(`![上传中，进度${progress.percent}%]()`)
-          }
-        }).then(file => {
-          console.log('文件保存完成')
-          console.log(file)
-          let text = `![${file.attributes.name}](${file.attributes.url}?imageView2/0/w/800/h/400)`
-          self.insertText(text)
-        }).catch(err => console.log(err))
+        avFile
+          .save({
+            keepFileName: true,
+            onprogress(progress) {
+              self.insertText(`![上传中，进度${progress.percent}%]()`)
+            },
+          })
+          .then((file) => {
+            console.log('文件保存完成')
+            console.log(file)
+            let text = `![${file.attributes.name}](${file.attributes.url}?imageView2/0/w/800/h/400)`
+            self.insertText(text)
+          })
+          .catch((err) => console.log(err))
       }
     }
   },
 
-  insertText (text = '') {
+  insertText(text = '') {
     let $textarea = this.$textarea
     let start = $textarea.selectionStart
     let end = $textarea.selectionEnd
     let oldText = $textarea.value
 
-    $textarea.value = `${oldText.substring(0, start)}${text} ${oldText.substring(end)}`
+    $textarea.value = `${oldText.substring(
+      0,
+      start,
+    )}${text} ${oldText.substring(end)}`
     $textarea.focus()
     $textarea.setSelectionRange(start, start + text.length)
-  }
+  },
 }
 
 // 设置转场
 const Editor = {
-  init () {
+  init() {
     console.log('Editor init...')
     this.$editInput = $('.editor textarea')
     this.$saveBtn = $('.editor .button-save')
     this.$slideContainer = $('.slides')
-    this.markdown = localStorage.markdown || `# one slide`
+    this.markdown = localStorage.markdown || `### 欢迎使用极简PPT`
 
     this.bind()
     this.start()
   },
 
-  bind () {
+  bind() {
     this.$saveBtn.onclick = () => {
       localStorage.markdown = this.$editInput.value
       location.reload()
     }
   },
 
-  start () {
+  start() {
     this.$editInput.value = this.markdown
     this.$slideContainer.innerHTML = convert(this.markdown)
     Reveal.initialize({
@@ -185,20 +196,30 @@ const Editor = {
       transition: localStorage.transition || 'slide', // none/fade/slide/convex/concave/zoom
       // More info https://github.com/hakimel/reveal.js#dependencies
       dependencies: [
-        { src: 'plugin/markdown/marked.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
-        { src: 'plugin/markdown/markdown.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+        {
+          src: 'plugin/markdown/marked.js',
+          condition: function () {
+            return !!document.querySelector('[data-markdown]')
+          },
+        },
+        {
+          src: 'plugin/markdown/markdown.js',
+          condition: function () {
+            return !!document.querySelector('[data-markdown]')
+          },
+        },
         { src: 'plugin/highlight/highlight.js' },
         { src: 'plugin/search/search.js', async: true },
         { src: 'plugin/zoom-js/zoom.js', async: true },
-        { src: 'plugin/notes/notes.js', async: true }
-      ]
+        { src: 'plugin/notes/notes.js', async: true },
+      ],
     })
-  }
+  },
 }
 
 // 设置主题CSS
 const Theme = {
-  init () {
+  init() {
     this.$$figures = $$('.theme figure')
     this.$transition = $('.theme .transition')
     this.$align = $('.theme .align')
@@ -208,12 +229,15 @@ const Theme = {
     this.loadTheme()
   },
 
-  bind () {
-    this.$$figures.forEach($figure => $figure.onclick = () => {
-      this.$$figures.forEach($item => $item.classList.remove('select'))
-      $figure.classList.add('select')
-      this.setTheme($figure.dataset.theme)
-    })
+  bind() {
+    this.$$figures.forEach(
+      ($figure) =>
+        ($figure.onclick = () => {
+          this.$$figures.forEach(($item) => $item.classList.remove('select'))
+          $figure.classList.add('select')
+          this.setTheme($figure.dataset.theme)
+        }),
+    )
 
     this.$transition.onchange = function () {
       localStorage.transition = this.value
@@ -226,12 +250,12 @@ const Theme = {
     }
   },
 
-  setTheme (theme) {
+  setTheme(theme) {
     localStorage.theme = theme
     location.reload()
   },
 
-  loadTheme () {
+  loadTheme() {
     let theme = localStorage.theme || 'beige'
     let $link = document.createElement('link')
     $link.rel = 'stylesheet'
@@ -239,22 +263,24 @@ const Theme = {
     document.head.appendChild($link)
 
     //$(`.theme figure[data-theme=${theme}]`)
-    Array.from(this.$$figures).find($figure => $figure.dataset.theme === theme).classList.add('select')
+    Array.from(this.$$figures)
+      .find(($figure) => $figure.dataset.theme === theme)
+      .classList.add('select')
     this.$transition.value = localStorage.transition || 'slide'
     this.$align.value = localStorage.align || 'center'
     this.$reveal.classList.add(this.$align.value)
-  }
+  },
 }
 // 打印模块
 const Print = {
-  init () {
+  init() {
     this.$download = $('.download')
 
     this.bind()
     this.start()
   },
 
-  bind () {
+  bind() {
     this.$download.addEventListener('click', () => {
       let $link = document.createElement('a')
       $link.setAttribute('target', '_blank')
@@ -268,7 +294,7 @@ const Print = {
     }
   },
 
-  start () {
+  start() {
     let link = document.createElement('link')
     link.rel = 'stylesheet'
     link.type = 'text/css'
@@ -279,18 +305,13 @@ const Print = {
       link.href = 'css/print/paper.css'
     }
     document.head.appendChild(link)
-  }
+  },
 }
 
 const App = {
-  init () {
-    [...arguments].forEach(Module => Module.init())
-  }
+  init() {
+    ;[...arguments].forEach((Module) => Module.init())
+  },
 }
 
 App.init(Menu, ImgUploader, Editor, Theme, Print)
-
-
-
-
-
